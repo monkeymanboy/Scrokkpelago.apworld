@@ -98,17 +98,73 @@ class ScrokkpelagoWorld(World):
 
     def generate_early(self):
         starting_tiles = self.options.starting_tiles.value
+        if self.options.start_with_nothing:
+            starting_tiles = 0
         self.starting_card_names = []
-        if starting_tiles > 0:
+        if starting_tiles >= 2:
             all_cards = [
                 f"{rank} of {suit}"
                 for rank in RANKS
                 for suit in SUITS
             ]
-            self.random.shuffle(all_cards)
-            self.starting_card_names = all_cards[:starting_tiles]
+            used_cards = set()
+            def add_card(rank, suit):
+                card_name = f"{rank} of {suit}"
+                if card_name not in used_cards:
+                    used_cards.add(card_name)
+                    self.starting_card_names.append(card_name)
+            # 2-4 tiles: guaranteed random pair
+            if starting_tiles <= 4:
+                rank = self.random.choice(RANKS)
+                suits = self.random.sample(SUITS, 2)
+        
+                for suit in suits:
+                    add_card(rank, suit)
+            # 5+ tiles: pair, flush, or straight with equal probability
+            else:
+                pattern = self.random.choice(["pair", "flush", "straight"])
+                if pattern == "pair":
+                    rank = self.random.choice(RANKS)
+                    suits = self.random.sample(SUITS, 2)
+                    for suit in suits:
+                        add_card(rank, suit)
+                elif pattern == "flush":
+                    suit = self.random.choice(SUITS)
+                    ranks = self.random.sample(RANKS, 5)
+                    for rank in ranks:
+                        add_card(rank, suit)
+                elif pattern == "straight":
+                    sequences = [
+                        {14, 2, 3, 4, 5},
+                        {2, 3, 4, 5, 6},
+                        {3, 4, 5, 6, 7},
+                        {4, 5, 6, 7, 8},
+                        {5, 6, 7, 8, 9},
+                        {6, 7, 8, 9, 10},
+                        {7, 8, 9, 10, 11},
+                        {8, 9, 10, 11, 12},
+                        {9, 10, 11, 12, 13},
+                        {10, 11, 12, 13, 14},
+                    ]
+                    sequence = self.random.choice(sequences)
+                    for rank_value in sequence:
+                        rank = next(
+                            rank_name
+                            for rank_name, value in RANK_VALUES.items()
+                            if value == rank_value
+                        )
+                        suit = self.random.choice(SUITS)
+                        add_card(rank, suit)
+        
+            remaining_cards = [
+                card for card in all_cards
+                if card not in used_cards
+            ]
+            self.random.shuffle(remaining_cards)
+            self.starting_card_names.extend(remaining_cards[:starting_tiles - len(self.starting_card_names)])
             for card_name in self.starting_card_names:
                 self.multiworld.push_precollected(self.create_item(card_name))
+
 
     def create_regions(self):
         menu = Region("Menu", self.player, self.multiworld)

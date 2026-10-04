@@ -31,10 +31,15 @@ class CheckEveryHand(Toggle):
     default = 1
 
 class StartingTiles(Range):
-    """Number of random unique cards given to the player at the start."""
+    """Number of random tiles given to the player at the start."""
     display_name = "Starting Tiles"
-    range_start = 0
+    range_start = 2
     range_end = 52
+    default = 2
+
+class StartWithNothing(Toggle):
+    """UNSTABLE: If this is enabled there will be nothing to do in Scrokkle at the start without finding tiles in other games. If playing Scrokkpelago alone or without other games that don't have checks available from the start, world gen will fail as there would be no way to find anything."""
+    display_name = "Start with nothing"
     default = 0
 
 class Goal(Choice):
@@ -99,6 +104,7 @@ class ScrokkpelagoOptions(PerGameCommonOptions):
     score_threshold_count: ScoreThresholdCount
     check_every_hand: CheckEveryHand
     starting_tiles: StartingTiles
+    start_with_nothing: StartWithNothing
     tiles_per_threshold: TilesPerThresholdLogic
     clear_board_weight: ClearBoardTrapWeight
     progression_hint_weight: ProgressionHintTokenWeight

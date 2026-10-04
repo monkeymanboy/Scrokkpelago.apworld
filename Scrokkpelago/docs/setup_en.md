@@ -13,7 +13,7 @@ https://scrokkle.io/ap/
 
 ## YAML Options
 ### Starting Tiles
-As you might have guessed this is how many tiles you start the game with. If there are checks avaliable from the start in other games you can usually leave this at a 0. But if you are playing in a game with no starting locations reachable (like scrokkle itself) you will need to turn this up a little bit, 2 would be the bare minimum in that situation but you may need up to 5.
+As you might have guessed this is how many tiles you start the game with. You will always be able to make at least one hand with your starting tiles.
 ### Check Every Card
 Adds a check location for the first time you use each type of card tile
 ### Check Every Hand
@@ -28,3 +28,5 @@ The progression hint tokens will hint a progression item (or filler/trap if none
 You generally do not need these are there are enough locations already but this adds more for eaching score thresholds, each threshold 500 more than the last.
 ### Use Score Goal
 Instead of using all the tiles, you can have the goal be reaching a score threshold allowing completion before finding all the tiles.
+### Start with nothing
+This will override the starting tiles option and make it 0. You will not be able to do anything in Scrokkle from the start without another slot finding you tiles. This can cause world generation to fail if not played alongside other games that can find the tiles.
